@@ -5,6 +5,16 @@ import { getCollection } from 'astro:content';
 const books = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
+
+// DEBUG
+console.log('📚 Livros encontrados:');
+books.forEach(book => {
+	console.log(`  - Slug: "${book.slug}"`);
+	console.log(`  - Título: "${book.data.title}"`);
+	console.log(`  - URL: /livros/${book.slug}`);
+	console.log('---');
+});
+
 ---
 
 <BaseLayout title="Livros - Carlos Aleluia">
@@ -20,50 +30,59 @@ const books = (await getCollection('blog')).sort(
 			letter-spacing: -1px;
 		}
 
-		.books-list {
+		.books-grid {
 			padding: 4rem 0;
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+			gap: 3rem;
 		}
 
-		.book-item {
-			padding: 3rem 0;
-			border-bottom: 1px solid var(--border-color);
+		.book-card {
+			text-align: center;
 		}
 
-		.book-item:last-child {
-			border-bottom: none;
+		.book-cover {
+			width: 100%;
+			aspect-ratio: 2/3;
+			background: #f0f0f0;
+			margin-bottom: 1.5rem;
+			overflow: hidden;
+			border-radius: 4px;
 		}
 
-		.book-item h2 {
-			font-size: 2.2rem;
+		.book-cover img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.book-card h2 {
+			font-size: 1.5rem;
 			font-weight: 400;
-			margin-bottom: 1rem;
+			margin-bottom: 0.75rem;
 			letter-spacing: -0.5px;
 		}
 
-		.book-item h2 a {
+		.book-card h2 a {
 			text-decoration: none;
 			color: var(--text-primary);
 			transition: color 0.2s;
 		}
 
-		.book-item h2 a:hover {
+		.book-card h2 a:hover {
 			color: var(--text-secondary);
 		}
 
 		.book-meta {
 			color: var(--text-secondary);
 			font-size: 0.9rem;
-			margin-bottom: 1.25rem;
-			text-transform: uppercase;
-			letter-spacing: 1px;
-			font-weight: 400;
+			margin-bottom: 1rem;
 		}
 
 		.book-description {
-			font-size: 1.1rem;
-			line-height: 1.8;
+			font-size: 0.95rem;
+			line-height: 1.6;
 			color: var(--text-secondary);
-			max-width: 700px;
 		}
 
 		@media (max-width: 768px) {
@@ -71,8 +90,9 @@ const books = (await getCollection('blog')).sort(
 				font-size: 2.2rem;
 			}
 
-			.book-item h2 {
-				font-size: 1.8rem;
+			.books-grid {
+				grid-template-columns: 1fr;
+				gap: 2.5rem;
 			}
 		}
 	</style>
@@ -82,11 +102,20 @@ const books = (await getCollection('blog')).sort(
 			<h1>Livros</h1>
 		</header>
 
-		<section class="books-list">
+		<section class="books-grid">
 			{books.map((book) => (
-				<article class="book-item">
+				<article class="book-card">
+					<a href={`/livros/${book.slug}`}>
+						<div class="book-cover">
+							{book.data.coverImage ? (
+								<img src={book.data.coverImage} alt={book.data.title} />
+							) : (
+								<div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+							)}
+						</div>
+					</a>
 					<h2>
-						<a href={`/livros/${book.slug}/`}>{book.data.title}</a>
+						<a href={`/livros/${book.slug}`}>{book.data.title}</a>
 					</h2>
 					<p class="book-meta">
 						{book.data.pubDate.toLocaleDateString('pt-PT', {

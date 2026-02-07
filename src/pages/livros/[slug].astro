@@ -62,8 +62,22 @@ const { Content } = await book.render();
 			letter-spacing: -0.5px;
 		}
 
+		.book-content h3 {
+			font-size: 1.4rem;
+			font-weight: 400;
+			margin: 2.5rem 0 1rem;
+		}
+
 		.book-content p {
 			margin-bottom: 1.5rem;
+		}
+
+		.book-content blockquote {
+			border-left: 3px solid var(--border-color);
+			padding-left: 2rem;
+			margin: 2rem 0;
+			font-style: italic;
+			color: var(--text-secondary);
 		}
 
 		.book-content a {
@@ -72,9 +86,22 @@ const { Content } = await book.render();
 			text-underline-offset: 3px;
 		}
 
+		.book-content ul, .book-content ol {
+			margin: 1.5rem 0;
+			padding-left: 2rem;
+		}
+
+		.book-content li {
+			margin-bottom: 0.75rem;
+		}
+
 		@media (max-width: 768px) {
 			.book-header h1 {
 				font-size: 2.5rem;
+			}
+
+			.book-content {
+				font-size: 1.05rem;
 			}
 		}
 	</style>

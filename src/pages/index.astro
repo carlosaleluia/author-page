@@ -10,18 +10,29 @@ const books = (await getCollection('blog')).sort(
 <BaseLayout title="Carlos Aleluia">
 	<style>
 		.hero {
-			background: var(--accent-color);
-			padding: 5rem 2rem;
+			padding: 0;
 			margin-bottom: 5rem;
+			overflow: hidden;
 		}
 
 		.hero-container {
-			max-width: 1200px;
+			max-width: 1400px;
 			margin: 0 auto;
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 4rem;
-			align-items: center;
+			display: flex;
+			align-items: stretch;
+			min-height: 600px;
+			position: relative;
+		}
+
+		/* Bloco azul com texto */
+		.hero-text {
+			background: var(--accent-color);
+			padding: 5rem 6rem 5rem 4rem;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			flex: 0 0 55%; /* Ocupa 55% da largura */
+			z-index: 1;
 		}
 
 		.hero-text h1 {
@@ -30,6 +41,7 @@ const books = (await getCollection('blog')).sort(
 			letter-spacing: -1px;
 			margin-bottom: 2rem;
 			line-height: 1.2;
+			margin-top: 2rem;
 		}
 
 		.hero-text .bio {
@@ -38,9 +50,22 @@ const books = (await getCollection('blog')).sort(
 			color: var(--text-primary);
 		}
 
+		/* Bloco da imagem - sobrepõe o azul */
+		.hero-image {
+			position: absolute;
+			right: 0;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 50%;
+			height: 85%;
+			z-index: 2;
+			box-shadow: -10px 10px 40px rgba(0,0,0,0.15);
+		}
+
 		.hero-image img {
 			width: 100%;
-			height: auto;
+			height: 100%;
+			object-fit: cover;
 			display: block;
 		}
 
@@ -110,24 +135,43 @@ const books = (await getCollection('blog')).sort(
 			border-color: var(--text-primary);
 		}
 
+		/* Responsive */
 		@media (max-width: 968px) {
 			.hero-container {
-				grid-template-columns: 1fr;
-				gap: 3rem;
+				flex-direction: column;
+				min-height: auto;
+			}
+
+			.hero-text {
+				flex: 1;
+				padding: 4rem 2rem;
 			}
 
 			.hero-text h1 {
 				font-size: 2.8rem;
 			}
+
+			.hero-image {
+				position: relative;
+				width: 100%;
+				height: 400px;
+				top: auto;
+				transform: none;
+			}
 		}
 
 		@media (max-width: 768px) {
-			.hero {
+			.hero-text {
 				padding: 3rem 1.5rem;
 			}
 
 			.hero-text h1 {
 				font-size: 2.2rem;
+				margin-top: 1rem;
+			}
+
+			.hero-image {
+				height: 300px;
 			}
 		}
 	</style>

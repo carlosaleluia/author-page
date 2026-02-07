@@ -1,7 +1,8 @@
 ---
-title: 'As Estrelas Não Mentem'
+title: 'Treze'
 description: 'Uma viagem épica através do cosmos onde a humanidade descobre que não está sozinha no universo.'
 pubDate: 'Dec 15 2024'
+coverImage: '/capas/treze.jpg'
 ---
 
 *"As Estrelas Não Mentem"* é o primeiro romance de uma trilogia que explora os limites da exploração espacial e o contacto com civilizações alienígenas.
