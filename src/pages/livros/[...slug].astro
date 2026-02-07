@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+	const books = await getCollection('blog');
+	return books.map((book) => ({
+		params: { slug: book.slug },
+		props: book,
+	}));
+}
+
+const book = Astro.props;
+const { Content } = await book.render();
+---
+
+<BaseLayout title={`${book.data.title} - Carlos Aleluia`}>
+	<style>
+		.back-link {
+			display: inline-block;
+			margin-bottom: 2rem;
+			color: var(--text-secondary);
+			text-decoration: none;
+			font-size: 0.95rem;
+			transition: color 0.2s;
+		}
+
+		.back-link:hover {
+			color: var(--text-primary);
+		}
+
+		.book-header {
+			padding: 5rem 0 4rem;
+			border-bottom: 1px solid var(--border-color);
+		}
+
+		.book-header h1 {
+			font-size: 3.5rem;
+			font-weight: 300;
+			letter-spacing: -1px;
+			margin-bottom: 1.5rem;
+			line-height: 1.2;
+		}
+
+		.book-meta {
+			color: var(--text-secondary);
+			font-size: 0.9rem;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+
+		.book-content {
+			padding: 4rem 0;
+			font-size: 1.1rem;
+			line-height: 1.9;
+		}
+
+		.book-content h2 {
+			font-size: 1.8rem;
+			font-weight: 400;
+			margin: 3rem 0 1.5rem;
+			letter-spacing: -0.5px;
+		}
+
+		.book-content p {
+			margin-bottom: 1.5rem;
+		}
+
+		.book-content a {
+			color: var(--text-primary);
+			text-decoration: underline;
+			text-underline-offset: 3px;
+		}
+
+		@media (max-width: 768px) {
+			.book-header h1 {
+				font-size: 2.5rem;
+			}
+		}
+	</style>
+
+	<div class="container">
+		<a href="/livros" class="back-link">← Voltar aos livros</a>
+
+		<header class="book-header">
+			<h1>{book.data.title}</h1>
+			<p class="book-meta">
+				{book.data.pubDate.toLocaleDateString('pt-PT', {
+					year: 'numeric',
+					month: 'long'
+				})}
+			</p>
+		</header>
+
+		<article class="book-content">
+			<Content />
+		</article>
+	</div>
+</BaseLayout>

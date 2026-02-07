@@ -1,0 +1,392 @@
+---
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description = 'Escritor português' } = Astro.props;
+
+// Para o dropdown de livros
+import { getCollection } from 'astro:content';
+const books = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<!doctype html>
+<html lang="pt">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="description" content={description} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>{title}</title>
+		<style is:global>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			:root {
+				--text-primary: #1a1a1a;
+				--text-secondary: #666;
+				--border-color: #e5e5e5;
+				--bg-hover: #f9f9f9;
+				--accent-color: #e6f2ff;
+			}
+
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+				line-height: 1.7;
+				color: var(--text-primary);
+				background: #fff;
+				-webkit-font-smoothing: antialiased;
+			}
+
+			/* Navigation */
+			header nav {
+				border-bottom: 1px solid var(--border-color);
+				background: #fff;
+				position: sticky;
+				top: 0;
+				z-index: 100;
+			}
+
+			.nav-container {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 1.5rem 2rem;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+
+			.nav-left {
+				display: flex;
+				align-items: center;
+				gap: 2rem;
+			}
+
+			.logo {
+				font-size: 1.1rem;
+				font-weight: 400;
+				letter-spacing: 0.5px;
+				text-decoration: none;
+				color: var(--text-primary);
+			}
+
+			/* Hamburger Icon */
+			.hamburger {
+				background: none;
+				border: none;
+				cursor: pointer;
+				padding: 0;
+				width: 30px;
+				height: 24px;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+			}
+
+			.hamburger span {
+				display: block;
+				width: 100%;
+				height: 3px;
+				background: var(--text-primary);
+				transition: 0.3s;
+			}
+
+			/* Desktop Navigation */
+			.desktop-nav {
+				display: flex;
+				gap: 2.5rem;
+				list-style: none;
+			}
+
+			.desktop-nav > li {
+				position: relative;
+			}
+
+			.desktop-nav > li > a {
+				text-decoration: none;
+				color: var(--text-primary);
+				font-size: 0.95rem;
+				letter-spacing: 0.5px;
+				transition: color 0.2s;
+				font-weight: 400;
+			}
+
+			.desktop-nav > li > a:hover {
+				color: var(--text-secondary);
+			}
+
+			/* Dropdown Menu */
+			.dropdown {
+				position: absolute;
+				top: 100%;
+				right: 0;
+				background: #fff;
+				border: 1px solid var(--border-color);
+				min-width: 250px;
+				padding: 1rem 0;
+				opacity: 0;
+				visibility: hidden;
+				transform: translateY(-10px);
+				transition: all 0.3s;
+				box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+			}
+
+			.desktop-nav > li:hover .dropdown {
+				opacity: 1;
+				visibility: visible;
+				transform: translateY(0);
+			}
+
+			.dropdown a {
+				display: block;
+				padding: 0.75rem 1.5rem;
+				color: var(--text-primary);
+				text-decoration: none;
+				font-size: 0.9rem;
+				transition: background 0.2s;
+			}
+
+			.dropdown a:hover {
+				background: var(--bg-hover);
+			}
+
+			/* Side Menu (Hamburger) */
+			.side-menu {
+				position: fixed;
+				top: 0;
+				left: -400px;
+				width: 400px;
+				height: 100%;
+				background: #000;
+				z-index: 200;
+				padding: 3rem 2rem;
+				transition: left 0.3s;
+				overflow-y: auto;
+			}
+
+			.side-menu.active {
+				left: 0;
+			}
+
+			.menu-close {
+				position: absolute;
+				top: 2rem;
+				right: 2rem;
+				background: none;
+				border: none;
+				color: #fff;
+				font-size: 2.5rem;
+				cursor: pointer;
+				width: 40px;
+				height: 40px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				line-height: 1;
+				transition: color 0.2s;
+			}
+
+			.menu-close:hover {
+				color: #999;
+			}
+
+			.side-menu nav {
+				margin-top: 4rem;
+			}
+
+			.side-menu ul {
+				list-style: none;
+			}
+
+			.side-menu > nav > ul > li {
+				margin-bottom: 2rem;
+			}
+
+			.side-menu a {
+				color: #fff;
+				text-decoration: none;
+				font-size: 2rem;
+				font-weight: 300;
+				letter-spacing: -1px;
+				transition: color 0.2s;
+				display: block;
+			}
+
+			.side-menu a:hover {
+				color: #999;
+			}
+
+			/* Side menu submenu */
+			.side-menu .submenu {
+				margin-top: 1rem;
+				margin-left: 1.5rem;
+			}
+
+			.side-menu .submenu li {
+				margin-bottom: 0.75rem;
+			}
+
+			.side-menu .submenu a {
+				font-size: 1.2rem;
+				font-weight: 300;
+			}
+
+			/* Overlay */
+			.menu-overlay-bg {
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0,0,0,0.5);
+				z-index: 199;
+			}
+
+			.menu-overlay-bg.active {
+				display: block;
+			}
+
+			/* Container */
+			.container {
+				max-width: 900px;
+				margin: 0 auto;
+				padding: 0 2rem;
+			}
+
+			/* Footer */
+			footer {
+				border-top: 1px solid var(--border-color);
+				padding: 3rem 0;
+				margin-top: 5rem;
+			}
+
+			footer .container {
+				text-align: center;
+				color: var(--text-secondary);
+				font-size: 0.9rem;
+			}
+
+			/* Responsive */
+			@media (max-width: 968px) {
+				.desktop-nav {
+					display: none;
+				}
+			}
+
+			@media (max-width: 768px) {
+				.side-menu {
+					width: 300px;
+					left: -300px;
+				}
+
+				.side-menu a {
+					font-size: 1.5rem;
+				}
+
+				.side-menu .submenu a {
+					font-size: 1rem;
+				}
+
+				.container {
+					padding: 0 1.5rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<nav>
+				<div class="nav-container">
+					<div class="nav-left">
+						<button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+							<span></span>
+							<span></span>
+							<span></span>
+						</button>
+						<a href="/" class="logo">CARLOS ALELUIA</a>
+					</div>
+					
+					<!-- Desktop Navigation with Dropdown -->
+					<ul class="desktop-nav">
+						<li><a href="/">Home</a></li>
+						<li>
+							<a href="/livros">Livros</a>
+							<div class="dropdown">
+								{books.map((book) => (
+									<a href={`/livros/${book.slug}/`}>{book.data.title}</a>
+								))}
+							</div>
+						</li>
+						<li><a href="/sobre">Sobre</a></li>
+					</ul>
+				</div>
+			</nav>
+		</header>
+
+		<!-- Side Menu (Hamburger) -->
+		<div class="menu-overlay-bg" id="menuOverlayBg"></div>
+		<div class="side-menu" id="sideMenu">
+			<button class="menu-close" id="menuClose" aria-label="Fechar">×</button>
+			<nav>
+				<ul>
+					<li><a href="/">Home</a></li>
+					<li>
+						<a href="/livros">Livros</a>
+						<ul class="submenu">
+							{books.map((book) => (
+								<li><a href={`/livros/${book.slug}/`}>{book.data.title}</a></li>
+							))}
+						</ul>
+					</li>
+					<li><a href="/sobre">Sobre</a></li>
+				</ul>
+			</nav>
+		</div>
+
+		<main>
+			<slot />
+		</main>
+
+		<footer>
+			<div class="container">
+				<p>© {new Date().getFullYear()} Carlos Aleluia. Todos os direitos reservados.</p>
+			</div>
+		</footer>
+
+		<script>
+			const hamburgerBtn = document.getElementById('hamburgerBtn');
+			const sideMenu = document.getElementById('sideMenu');
+			const menuOverlayBg = document.getElementById('menuOverlayBg');
+			const menuClose = document.getElementById('menuClose');
+
+			function openMenu() {
+				sideMenu?.classList.add('active');
+				menuOverlayBg?.classList.add('active');
+				document.body.style.overflow = 'hidden';
+			}
+
+			function closeMenu() {
+				sideMenu?.classList.remove('active');
+				menuOverlayBg?.classList.remove('active');
+				document.body.style.overflow = '';
+			}
+
+			hamburgerBtn?.addEventListener('click', openMenu);
+			menuClose?.addEventListener('click', closeMenu);
+			menuOverlayBg?.addEventListener('click', closeMenu);
+
+			// Close menu when clicking a link
+			const sideMenuLinks = sideMenu?.querySelectorAll('a');
+			sideMenuLinks?.forEach(link => {
+				link.addEventListener('click', closeMenu);
+			});
+		</script>
+	</body>
+</html>
