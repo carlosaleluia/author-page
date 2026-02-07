@@ -201,7 +201,7 @@ const books = (await getCollection('blog')).sort(
 				{books.slice(0, 3).map((book) => (
 					<article class="book-card">
 						<h2>
-							<a href={`/livros/${book.slug}/`}>{book.data.title}</a>
+							<a href={`/livros/${book.id}/`}>{book.data.title}</a>
 						</h2>
 						<p class="description">{book.data.description}</p>
 					</article>

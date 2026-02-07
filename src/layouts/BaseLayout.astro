@@ -320,7 +320,7 @@ const books = (await getCollection('blog')).sort(
 							<a href="/livros">Livros</a>
 							<div class="dropdown">
 								{books.map((book) => (
-									<a href={`/livros/${book.slug}`}>{book.data.title}</a>
+									<a href={`/livros/${book.id}`}>{book.data.title}</a>
 								))}
 							</div>
 						</li>
@@ -341,7 +341,7 @@ const books = (await getCollection('blog')).sort(
 						<a href="/livros">Livros</a>
 						<ul class="submenu">
 							{books.map((book) => (
-								<li><a href={`/livros/${book.slug}`}>{book.data.title}</a></li>
+								<li><a href={`/livros/${book.id}`}>{book.data.title}</a></li>
 							))}
 						</ul>
 					</li>
