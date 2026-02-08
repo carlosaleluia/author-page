@@ -12,26 +12,36 @@ const books = (await getCollection('blog')).sort(
 		.hero {
 			padding: 0;
 			margin-bottom: 5rem;
-			overflow: hidden;
 		}
 
 		.hero-container {
-			max-width: 1400px;
-			margin: 0 auto;
-			display: flex;
-			align-items: stretch;
-			min-height: 600px;
 			position: relative;
+			width: 100%;
+			height: 600px; /* Desktop hero height */
 		}
 
-		/* Bloco azul com texto */
+		/*
+		 * HERO LAYOUT — all positions are % of screen width.
+		 * Blue box:  15% ——————————————————————— 70%
+		 * Image:               55% ———————— 85%
+		 * Overlap zone:        55% ———— 70%
+		 *
+		 * Tweak the left/right values below to adjust positions.
+		 */
+
+		/* Blue rectangle — starts at 15%, ends at 70% of screen width */
 		.hero-text {
+			position: absolute;
+			left: 15%;   /* ← Blue box start X */
+			right: 30%;  /* ← 100% - 70% = Blue box end X */
+			top: 0;
+			bottom: 0;
 			background: var(--accent-color);
-			padding: 5rem 6rem 5rem 4rem;
+			padding: 5rem 17% 5rem 3rem; /* right padding keeps text before the 55% image overlap */
 			display: flex;
 			flex-direction: column;
-			justify-content: flex-start;
-			flex: 0 0 55%; /* Ocupa 55% da largura */
+			justify-content: center;
+			box-sizing: border-box;
 			z-index: 1;
 		}
 
@@ -41,7 +51,6 @@ const books = (await getCollection('blog')).sort(
 			letter-spacing: -1px;
 			margin-bottom: 2rem;
 			line-height: 1.2;
-			margin-top: 2rem;
 		}
 
 		.hero-text .bio {
@@ -50,16 +59,16 @@ const books = (await getCollection('blog')).sort(
 			color: var(--text-primary);
 		}
 
-		/* Bloco da imagem - sobrepõe o azul */
+		/* Photo — starts at 55%, ends at 85% of screen width, 80% of blue box height */
 		.hero-image {
 			position: absolute;
-			right: 0;
-			top: 50%;
-			transform: translateY(-50%);
-			width: 50%;
-			height: 85%;
+			left: 55%;    /* ← Image start X */
+			right: 15%;   /* ← 100% - 85% = Image end X */
+			top: 10%;     /* ← (100% - 80%) / 2 = vertically centers at 80% height */
+			bottom: 10%;  /* ← same as top */
 			z-index: 2;
-			box-shadow: -10px 10px 40px rgba(0,0,0,0.15);
+			box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+			overflow: hidden;
 		}
 
 		.hero-image img {
@@ -82,16 +91,44 @@ const books = (await getCollection('blog')).sort(
 
 		.books-grid {
 			display: grid;
-			gap: 3rem;
+			gap: 4rem;
 		}
 
+		/* Each book card: cover + text side by side */
 		.book-card {
-			padding-bottom: 3rem;
+			display: flex;
+			gap: 3rem;
+			align-items: center;
+			padding-bottom: 4rem;
 			border-bottom: 1px solid var(--border-color);
 		}
 
 		.book-card:last-child {
 			border-bottom: none;
+		}
+
+		/* Alternate: even cards flip the order (text left, cover right) */
+		.book-card:nth-child(even) {
+			flex-direction: row-reverse;
+		}
+
+		.book-cover {
+			flex: 0 0 220px;
+			aspect-ratio: 2/3;
+			overflow: hidden;
+			border-radius: 4px;
+			background: #f0f0f0;
+		}
+
+		.book-cover img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+		}
+
+		.book-info {
+			flex: 1;
 		}
 
 		.book-card h2 {
@@ -118,6 +155,23 @@ const books = (await getCollection('blog')).sort(
 			margin-top: 1rem;
 		}
 
+		.book-card .btn-mais {
+			display: inline-block;
+			margin-top: 1.5rem;
+			padding: 0.6rem 1.8rem;
+			border: 1px solid var(--border-color);
+			color: var(--text-primary);
+			text-decoration: none;
+			font-size: 0.95rem;
+			transition: all 0.2s;
+			letter-spacing: 0.5px;
+		}
+
+		.book-card .btn-mais:hover {
+			background: var(--bg-hover);
+			border-color: var(--text-primary);
+		}
+
 		.view-all {
 			display: inline-block;
 			margin-top: 2rem;
@@ -137,13 +191,29 @@ const books = (await getCollection('blog')).sort(
 
 		/* Responsive */
 		@media (max-width: 968px) {
-			.hero-container {
+			.book-card,
+			.book-card:nth-child(even) {
 				flex-direction: column;
-				min-height: auto;
+			}
+
+			.book-cover {
+				flex: none;
+				width: 180px;
+			}
+		}
+
+		@media (max-width: 968px) {
+			.hero-container {
+				height: auto;
 			}
 
 			.hero-text {
-				flex: 1;
+				position: relative;
+				left: auto;
+				right: auto;
+				top: auto;
+				bottom: auto;
+				width: 100%;
 				padding: 4rem 2rem;
 			}
 
@@ -153,10 +223,13 @@ const books = (await getCollection('blog')).sort(
 
 			.hero-image {
 				position: relative;
+				left: auto;
+				right: auto;
+				top: auto;
+				bottom: auto;
 				width: 100%;
 				height: 400px;
-				top: auto;
-				transform: none;
+				box-shadow: none;
 			}
 		}
 
@@ -167,7 +240,6 @@ const books = (await getCollection('blog')).sort(
 
 			.hero-text h1 {
 				font-size: 2.2rem;
-				margin-top: 1rem;
 			}
 
 			.hero-image {
@@ -200,10 +272,20 @@ const books = (await getCollection('blog')).sort(
 			<div class="books-grid">
 				{books.slice(0, 3).map((book) => (
 					<article class="book-card">
-						<h2>
-							<a href={`/livros/${book.id}/`}>{book.data.title}</a>
-						</h2>
-						<p class="description">{book.data.description}</p>
+						<div class="book-cover">
+							{book.data.coverImage ? (
+								<img src={book.data.coverImage} alt={book.data.title} />
+							) : (
+								<div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+							)}
+						</div>
+						<div class="book-info">
+							<h2>
+								<a href={`/livros/${book.id}/`}>{book.data.title}</a>
+							</h2>
+							<p class="description">{book.data.description}</p>
+							<a href={`/livros/${book.id}/`} class="btn-mais">Mais</a>
+						</div>
 					</article>
 				))}
 			</div>
