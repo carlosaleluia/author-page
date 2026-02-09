@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-	const books = await getCollection('blog');
+	const books = await getCollection('livros');
 
 	return books.map((book) => ({
 		params: { slug: book.id },
@@ -30,28 +30,103 @@ const { Content } = await render(book);
 			color: var(--text-primary);
 		}
 
-		.book-header {
-			padding: 5rem 0 4rem;
-			border-bottom: 1px solid var(--border-color);
+		.book-layout {
+			display: flex;
+			gap: 4rem;
+			padding: 3rem 0 4rem;
 		}
 
-		.book-header h1 {
-			font-size: 3.5rem;
-			font-weight: 300;
-			letter-spacing: -1px;
-			margin-bottom: 1.5rem;
-			line-height: 1.2;
+		/* Left sidebar — ~1/3 */
+		.book-sidebar {
+			flex: 0 0 33%;
+			max-width: 33%;
+		}
+
+		.book-cover {
+			width: 100%;
+			aspect-ratio: 2/3;
+			overflow: hidden;
+			border-radius: 4px;
+			background: var(--placeholder-bg);
+		}
+
+		.book-cover img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
 		}
 
 		.book-meta {
 			color: var(--text-secondary);
-			font-size: 0.9rem;
+			font-size: 0.85rem;
 			text-transform: uppercase;
 			letter-spacing: 1px;
+			margin-top: 1rem;
+		}
+
+		.buy-section {
+			margin-top: 2.5rem;
+		}
+
+		.buy-section h3 {
+			font-size: 1rem;
+			font-weight: 500;
+			letter-spacing: 0.5px;
+			text-transform: uppercase;
+			color: var(--text-secondary);
+			margin-bottom: 1rem;
+		}
+
+		.buy-links {
+			display: flex;
+			flex-direction: column;
+			gap: 0.6rem;
+		}
+
+		.buy-link {
+			display: block;
+			padding: 0.75rem 1.2rem;
+			background: var(--accent-color);
+			color: var(--active-color);
+			text-decoration: none;
+			font-size: 0.9rem;
+			font-weight: 500;
+			border: 1px solid var(--active-color);
+			border-radius: 6px;
+			text-align: center;
+			transition: all 0.2s;
+			cursor: pointer;
+		}
+
+		.buy-link:hover {
+			background: var(--active-color);
+			color: #fff;
+		}
+
+		/* Right main — ~2/3 */
+		.book-main {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.book-main h1 {
+			font-size: 3rem;
+			font-weight: 300;
+			letter-spacing: -1px;
+			margin-bottom: 0.5rem;
+			line-height: 1.2;
+		}
+
+		.book-subtitle {
+			font-size: 1.3rem;
+			font-weight: 300;
+			color: var(--text-secondary);
+			margin-bottom: 1.5rem;
+			line-height: 1.4;
 		}
 
 		.book-content {
-			padding: 4rem 0;
 			font-size: 1.1rem;
 			line-height: 1.9;
 		}
@@ -97,7 +172,17 @@ const { Content } = await render(book);
 		}
 
 		@media (max-width: 768px) {
-			.book-header h1 {
+			.book-layout {
+				flex-direction: column;
+				gap: 2.5rem;
+			}
+
+			.book-sidebar {
+				flex: none;
+				max-width: 260px;
+			}
+
+			.book-main h1 {
 				font-size: 2.5rem;
 			}
 
@@ -110,18 +195,40 @@ const { Content } = await render(book);
 	<div class="container">
 		<a href="/livros" class="back-link">← Voltar aos livros</a>
 
-		<header class="book-header">
-			<h1>{book.data.title}</h1>
-			<p class="book-meta">
-				{book.data.pubDate.toLocaleDateString('pt-PT', {
-					year: 'numeric',
-					month: 'long'
-				})}
-			</p>
-		</header>
+		<div class="book-layout">
+			<aside class="book-sidebar">
+				{book.data.coverImage && (
+					<div class="book-cover">
+						<img src={book.data.coverImage} alt={book.data.title} />
+					</div>
+				)}
+				<p class="book-meta">
+					{book.data.pubDate.toLocaleDateString('pt-PT', {
+						year: 'numeric',
+						month: 'long'
+					})}
+				</p>
+				{book.data.buyLinks && book.data.buyLinks.length > 0 && (
+					<div class="buy-section">
+						<h3>Compra o livro</h3>
+						<div class="buy-links">
+							{book.data.buyLinks.map((link) => (
+								<a href={link.url} target="_blank" rel="noopener noreferrer" class="buy-link">{link.label}</a>
+							))}
+						</div>
+					</div>
+				)}
+			</aside>
 
-		<article class="book-content">
-			<Content />
-		</article>
+			<div class="book-main">
+				<h1>{book.data.title}</h1>
+				{book.data.subtitle && (
+					<p class="book-subtitle">{book.data.subtitle}</p>
+				)}
+				<article class="book-content">
+					<Content />
+				</article>
+			</div>
+		</div>
 	</div>
 </BaseLayout>

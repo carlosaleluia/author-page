@@ -1,16 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import { getSortedBooks } from '../lib/books';
 
-const books = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const books = await getSortedBooks();
 ---
 
 <BaseLayout title="Carlos Aleluia">
 	<style>
 		.hero {
 			padding: 0;
+			margin-top: 2rem;
 			margin-bottom: 5rem;
 		}
 
@@ -98,7 +97,7 @@ const books = (await getCollection('blog')).sort(
 		.book-card {
 			display: flex;
 			gap: 3rem;
-			align-items: center;
+			align-items: flex-start;
 			padding-bottom: 4rem;
 			border-bottom: 1px solid var(--border-color);
 		}
@@ -117,7 +116,8 @@ const books = (await getCollection('blog')).sort(
 			aspect-ratio: 2/3;
 			overflow: hidden;
 			border-radius: 4px;
-			background: #f0f0f0;
+			background: var(--placeholder-bg);
+			display: block;
 		}
 
 		.book-cover img {
@@ -268,17 +268,17 @@ const books = (await getCollection('blog')).sort(
 
 	<div class="container">
 		<section class="books-section">
-			<h2 class="section-title">Obras Recentes</h2>
+			<h2 class="section-title">Livros Recentes</h2>
 			<div class="books-grid">
 				{books.slice(0, 3).map((book) => (
 					<article class="book-card">
-						<div class="book-cover">
+						<a href={`/livros/${book.id}/`} class="book-cover">
 							{book.data.coverImage ? (
-								<img src={book.data.coverImage} alt={book.data.title} />
+								<img src={book.data.coverImage} alt={book.data.title} loading="lazy" />
 							) : (
 								<div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
 							)}
-						</div>
+						</a>
 						<div class="book-info">
 							<h2>
 								<a href={`/livros/${book.id}/`}>{book.data.title}</a>
@@ -289,7 +289,7 @@ const books = (await getCollection('blog')).sort(
 					</article>
 				))}
 			</div>
-			<a href="/livros" class="view-all">Ver Todas as Obras</a>
+			<a href="/livros" class="view-all">Ver Todos os Livros</a>
 		</section>
 	</div>
 </BaseLayout>

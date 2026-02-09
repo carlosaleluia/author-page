@@ -3,6 +3,13 @@ title: 'Treze'
 description: 'Uma viagem épica através do cosmos onde a humanidade descobre que não está sozinha no universo.'
 pubDate: 'Dec 15 2024'
 coverImage: '/capas/treze.jpg'
+buyLinks:
+  - label: 'Amazon Portugal'
+    url: 'https://amazon.pt'
+  - label: 'FNAC'
+    url: 'https://fnac.pt'
+  - label: 'Wook'
+    url: 'https://wook.pt'
 ---
 
 *"As Estrelas Não Mentem"* é o primeiro romance de uma trilogia que explora os limites da exploração espacial e o contacto com civilizações alienígenas.
@@ -14,9 +21,3 @@ No ano 2157, a primeira missão tripulada a Próxima Centauri descobre sinais in
 ## Sobre o Livro
 
 Este romance nasceu da minha fascinação com as questões fundamentais: estamos sozinhos? O que significa ser humano quando confrontados com o verdadeiramente alienígena?
-
-## Onde Comprar
-
-- [Amazon Portugal](https://amazon.pt)
-- [FNAC](https://fnac.pt)
-- [Wook](https://wook.pt)

@@ -8,10 +8,8 @@ const { title, description = 'Escritor português' } = Astro.props;
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 
 // Para o dropdown de livros
-import { getCollection } from 'astro:content';
-const books = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+import { getSortedBooks } from '../lib/books';
+const books = await getSortedBooks();
 ---
 
 <!doctype html>
@@ -35,6 +33,11 @@ const books = (await getCollection('blog')).sort(
 				--border-color: #e5e5e5;
 				--bg-hover: #f9f9f9;
 				--accent-color: #e6f2ff;
+				--active-color: #3b7dd8;
+				--active-color-light: #6ab0f3;
+				--menu-bg: #000;
+				--menu-hover: #999;
+				--placeholder-bg: #f0f0f0;
 			}
 
 			body {
@@ -88,9 +91,7 @@ const books = (await getCollection('blog')).sort(
 				padding: 0;
 				width: 30px;
 				height: 24px;
-				display: flex;
-				flex-direction: column;
-				justify-content: space-between;
+				position: relative;
 			}
 
 			.hamburger span {
@@ -98,7 +99,21 @@ const books = (await getCollection('blog')).sort(
 				width: 100%;
 				height: 3px;
 				background: var(--text-primary);
-				transition: 0.3s;
+				position: absolute;
+				left: 0;
+				transition: transform 0.3s, opacity 0.3s, top 0.3s;
+			}
+
+			.hamburger span:nth-child(1) {
+				top: 0;
+			}
+
+			.hamburger span:nth-child(2) {
+				top: 10px;
+			}
+
+			.hamburger span:nth-child(3) {
+				top: 20px;
 			}
 
 			/* Desktop Navigation */
@@ -128,8 +143,8 @@ const books = (await getCollection('blog')).sort(
 
 			/* Active page highlight */
 			.desktop-nav > li > a.active {
-				color: #3b7dd8;
-				border-bottom: 2px solid #3b7dd8;
+				color: var(--active-color);
+				border-bottom: 2px solid var(--active-color);
 				padding-bottom: 2px;
 			}
 
@@ -168,14 +183,14 @@ const books = (await getCollection('blog')).sort(
 				background: var(--bg-hover);
 			}
 
-			/* Side Menu (Hamburger) */
+			/* Side Menu — Desktop: black side panel */
 			.side-menu {
 				position: fixed;
 				top: 0;
 				left: -400px;
 				width: 400px;
 				height: 100%;
-				background: #000;
+				background: var(--menu-bg);
 				z-index: 200;
 				padding: 3rem 2rem;
 				transition: left 0.3s;
@@ -205,7 +220,23 @@ const books = (await getCollection('blog')).sort(
 			}
 
 			.menu-close:hover {
-				color: #999;
+				color: var(--menu-hover);
+			}
+
+			/* Overlay — desktop only */
+			.menu-overlay-bg {
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0,0,0,0.5);
+				z-index: 199;
+			}
+
+			.menu-overlay-bg.active {
+				display: block;
 			}
 
 			.side-menu nav {
@@ -231,21 +262,21 @@ const books = (await getCollection('blog')).sort(
 			}
 
 			.side-menu a:hover {
-				color: #999;
+				color: var(--menu-hover);
 			}
 
 			.side-menu a.active {
-				color: #6ab0f3;
+				color: var(--active-color-light);
 			}
 
 			/* Side menu submenu */
 			.side-menu .submenu {
-				margin-top: 1rem;
-				margin-left: 1.5rem;
+				margin-top: 0.75rem;
+				padding-left: 1.5rem;
 			}
 
 			.side-menu .submenu li {
-				margin-bottom: 0.75rem;
+				margin-bottom: 0.5rem;
 			}
 
 			.side-menu .submenu a {
@@ -255,7 +286,7 @@ const books = (await getCollection('blog')).sort(
 
 			/* Side menu social links */
 			.side-menu .social-links {
-				margin-top: 8rem; /* 4x normal item spacing (2rem) */
+				margin-top: 4rem;
 				list-style: none;
 			}
 
@@ -266,28 +297,19 @@ const books = (await getCollection('blog')).sort(
 			.side-menu .social-links a {
 				font-size: 1.2rem;
 				font-weight: 300;
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+			}
+
+			.side-menu .social-links a svg {
+				flex-shrink: 0;
 			}
 
 			/* Desktop nav social icons */
 			.desktop-nav .nav-icon {
 				display: flex;
 				align-items: center;
-			}
-
-			/* Overlay */
-			.menu-overlay-bg {
-				display: none;
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: rgba(0,0,0,0.5);
-				z-index: 199;
-			}
-
-			.menu-overlay-bg.active {
-				display: block;
 			}
 
 			/* Container */
@@ -310,19 +332,95 @@ const books = (await getCollection('blog')).sort(
 				font-size: 0.9rem;
 			}
 
+			/* Focus-visible indicators (WCAG 2.4.7) */
+			a:focus-visible,
+			button:focus-visible {
+				outline: 2px solid var(--active-color);
+				outline-offset: 2px;
+			}
+
+			.side-menu a:focus-visible {
+				outline-color: var(--active-color-light);
+			}
+
 			/* Responsive */
 			@media (max-width: 968px) {
 				.desktop-nav {
 					display: none;
 				}
+
+				/* Mobile: fullscreen white menu */
+				.site-header {
+					z-index: 300;
+				}
+
+				.side-menu {
+					left: 0;
+					width: 100%;
+					background: #fff;
+					padding: 6rem 2rem 3rem;
+					transition: opacity 0.3s, visibility 0.3s;
+					opacity: 0;
+					visibility: hidden;
+				}
+
+				.side-menu.active {
+					opacity: 1;
+					visibility: visible;
+				}
+
+				.menu-close {
+					display: none;
+				}
+
+				.menu-overlay-bg,
+				.menu-overlay-bg.active {
+					display: none;
+				}
+
+				.side-menu nav {
+					max-width: 400px;
+					margin: 0 auto;
+				}
+
+				.side-menu a {
+					color: var(--text-primary);
+				}
+
+				.side-menu a:hover {
+					color: var(--text-secondary);
+				}
+
+				.side-menu a.active {
+					color: var(--active-color);
+				}
+
+				.side-menu a:focus-visible {
+					outline-color: var(--active-color);
+				}
+
+				.side-menu .social-links {
+					border-top: 1px solid var(--border-color);
+					padding-top: 2rem;
+				}
+
+				/* Hamburger → Cross animation (mobile only) */
+				.hamburger.active span:nth-child(1) {
+					top: 10px;
+					transform: rotate(45deg);
+				}
+
+				.hamburger.active span:nth-child(2) {
+					opacity: 0;
+				}
+
+				.hamburger.active span:nth-child(3) {
+					top: 10px;
+					transform: rotate(-45deg);
+				}
 			}
 
 			@media (max-width: 768px) {
-				.side-menu {
-					width: 300px;
-					left: -300px;
-				}
-
 				.side-menu a {
 					font-size: 1.5rem;
 				}
@@ -377,7 +475,7 @@ const books = (await getCollection('blog')).sort(
 			</nav>
 		</header>
 
-		<!-- Side Menu (Hamburger) -->
+		<!-- Side Menu -->
 		<div class="menu-overlay-bg" id="menuOverlayBg"></div>
 		<div class="side-menu" id="sideMenu">
 			<button class="menu-close" id="menuClose" aria-label="Fechar">×</button>
@@ -388,15 +486,25 @@ const books = (await getCollection('blog')).sort(
 						<a href="/livros" class:list={[{ active: currentPath.startsWith('/livros') }]}>Livros</a>
 						<ul class="submenu">
 							{books.map((book) => (
-								<li><a href={`/livros/${book.id}`}>{book.data.title}</a></li>
+								<li><a href={`/livros/${book.id}`} class:list={[{ active: currentPath === `/livros/${book.id}` }]}>{book.data.title}</a></li>
 							))}
 						</ul>
 					</li>
 					<li><a href="/sobre" class:list={[{ active: currentPath === '/sobre' }]}>Sobre</a></li>
 				</ul>
 				<ul class="social-links">
-					<li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a></li>
-					<li><a href="https://goodreads.com" target="_blank" rel="noopener noreferrer">Goodreads</a></li>
+					<li>
+						<a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+							Instagram
+						</a>
+					</li>
+					<li>
+						<a href="https://goodreads.com" target="_blank" rel="noopener noreferrer">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.43 23.995c-3.608-.208-6.274-2.077-6.448-5.078.695.007 1.375-.013 2.07-.006.224 1.342 1.065 2.43 2.683 3.026 1.583.496 3.737.46 5.082-.174 1.527-.718 2.279-1.96 2.604-3.589.158-.748.2-1.58.202-2.37l-.037-.186c-.555.91-1.275 1.633-2.166 2.124-1.537.848-3.7.986-5.577.384-2.551-.819-3.977-2.845-4.453-5.291-.263-1.355-.2-2.813.133-4.145.576-2.3 2.09-4.025 4.235-4.87 1.768-.695 3.726-.678 5.225.165.776.435 1.325 1.01 1.783 1.676l.054-.015.015-1.554h1.96l-.013 12.298c-.007 1.15-.098 2.144-.378 3.123-.726 2.532-2.603 4.2-5.482 4.552-.488.06-.984.088-1.492.09v-.16zm2.601-7.736c1.09-.527 1.81-1.42 2.182-2.56.373-1.138.378-2.442.183-3.602-.236-1.406-.73-2.588-1.774-3.39-.847-.651-2.06-.898-3.182-.746-1.478.2-2.482 1.048-3.06 2.293-.474 1.023-.635 2.26-.534 3.473.105 1.267.44 2.418 1.2 3.345.718.877 1.742 1.36 2.988 1.37 1.114-.003 1.912-.28 2.007-.183h-.01z"/></svg>
+							Goodreads
+						</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -417,21 +525,58 @@ const books = (await getCollection('blog')).sort(
 			const menuOverlayBg = document.getElementById('menuOverlayBg');
 			const menuClose = document.getElementById('menuClose');
 
+			const focusableSelectors = 'a[href], button, [tabindex]:not([tabindex="-1"])';
+
+			function toggleMenu() {
+				const isOpen = sideMenu?.classList.contains('active');
+				if (isOpen) {
+					closeMenu();
+				} else {
+					openMenu();
+				}
+			}
+
 			function openMenu() {
 				sideMenu?.classList.add('active');
 				menuOverlayBg?.classList.add('active');
+				hamburgerBtn?.classList.add('active');
 				document.body.style.overflow = 'hidden';
 			}
 
 			function closeMenu() {
 				sideMenu?.classList.remove('active');
 				menuOverlayBg?.classList.remove('active');
+				hamburgerBtn?.classList.remove('active');
 				document.body.style.overflow = '';
+				hamburgerBtn?.focus();
 			}
 
-			hamburgerBtn?.addEventListener('click', openMenu);
+			hamburgerBtn?.addEventListener('click', toggleMenu);
 			menuClose?.addEventListener('click', closeMenu);
 			menuOverlayBg?.addEventListener('click', closeMenu);
+
+			// Escape key closes menu
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Escape' && sideMenu?.classList.contains('active')) {
+					closeMenu();
+				}
+			});
+
+			// Trap focus inside open menu
+			sideMenu?.addEventListener('keydown', (e) => {
+				if (e.key !== 'Tab') return;
+				const focusable = Array.from(sideMenu.querySelectorAll(focusableSelectors)) as HTMLElement[];
+				if (focusable.length === 0) return;
+				const first = focusable[0];
+				const last = focusable[focusable.length - 1];
+				if (e.shiftKey && document.activeElement === first) {
+					e.preventDefault();
+					last.focus();
+				} else if (!e.shiftKey && document.activeElement === last) {
+					e.preventDefault();
+					first.focus();
+				}
+			});
 
 			// Close menu when clicking a link
 			const sideMenuLinks = sideMenu?.querySelectorAll('a');

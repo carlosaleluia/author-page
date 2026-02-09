@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Página não encontrada - Carlos Aleluia">
+	<style>
+		.not-found {
+			padding: 8rem 0;
+			text-align: center;
+		}
+
+		.not-found h1 {
+			font-size: 3rem;
+			font-weight: 300;
+			letter-spacing: -1px;
+			margin-bottom: 1rem;
+		}
+
+		.not-found p {
+			color: var(--text-secondary);
+			font-size: 1.1rem;
+			margin-bottom: 2rem;
+		}
+
+		.not-found a {
+			display: inline-block;
+			padding: 0.75rem 2rem;
+			border: 1px solid var(--border-color);
+			color: var(--text-primary);
+			text-decoration: none;
+			font-size: 0.95rem;
+			transition: all 0.2s;
+			letter-spacing: 0.5px;
+		}
+
+		.not-found a:hover {
+			background: var(--bg-hover);
+			border-color: var(--text-primary);
+		}
+	</style>
+
+	<div class="container">
+		<div class="not-found">
+			<h1>Página não encontrada</h1>
+			<p>A página que procura não existe ou foi movida.</p>
+			<a href="/">Voltar à página inicial</a>
+		</div>
+	</div>
+</BaseLayout>
