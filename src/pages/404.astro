@@ -37,6 +37,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 			background: var(--bg-hover);
 			border-color: var(--text-primary);
 		}
+
+		.suggested-links {
+			margin-top: 2rem;
+		}
+
+		.suggested-links p {
+			color: var(--text-secondary);
+			font-size: 0.95rem;
+			margin-bottom: 1rem;
+		}
+
+		.suggested-links .links {
+			display: flex;
+			justify-content: center;
+			gap: 1rem;
+		}
+
+		@media (max-width: 768px) {
+			.not-found {
+				padding: 4rem 0;
+			}
+
+			.not-found h1 {
+				font-size: 2.2rem;
+			}
+		}
 	</style>
 
 	<div class="container">
@@ -44,6 +70,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 			<h1>Página não encontrada</h1>
 			<p>A página que procura não existe ou foi movida.</p>
 			<a href="/">Voltar à página inicial</a>
+			<div class="suggested-links">
+				<p>Ou visite:</p>
+				<div class="links">
+					<a href="/livros">Livros</a>
+					<a href="/online">Online</a>
+					<a href="/sobre">Sobre</a>
+				</div>
+			</div>
 		</div>
 	</div>
 </BaseLayout>

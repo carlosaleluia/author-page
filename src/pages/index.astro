@@ -118,6 +118,12 @@ const books = await getSortedBooks();
 			border-radius: 4px;
 			background: var(--placeholder-bg);
 			display: block;
+			transition: transform 0.2s, box-shadow 0.2s;
+		}
+
+		.book-cover:hover {
+			transform: scale(1.03);
+			box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 		}
 
 		.book-cover img {

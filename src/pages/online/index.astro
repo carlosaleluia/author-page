@@ -1,0 +1,167 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getSortedOnlineStories } from '../../lib/online';
+
+const stories = await getSortedOnlineStories();
+---
+
+<BaseLayout title="Online - Carlos Aleluia">
+
+	<style>
+		.page-header {
+			padding: 5rem 0 4rem;
+			border-bottom: 1px solid var(--border-color);
+		}
+
+		.page-header h1 {
+			font-size: 3rem;
+			font-weight: 300;
+			letter-spacing: -1px;
+		}
+
+		.page-header p {
+			color: var(--text-secondary);
+			font-size: 1.1rem;
+			margin-top: 0.75rem;
+		}
+
+		.stories-list {
+			padding: 2rem 0;
+		}
+
+		.story-row {
+			display: flex;
+			align-items: center;
+			gap: 1.5rem;
+			padding: 1.5rem 0;
+			border-bottom: 1px solid var(--border-color);
+			text-decoration: none;
+			color: inherit;
+			transition: background 0.2s;
+			margin: 0 -1rem;
+			padding-left: 1rem;
+			padding-right: 1rem;
+			border-radius: 4px;
+		}
+
+		.story-row:hover {
+			background: var(--bg-hover);
+		}
+
+		.story-thumbnail {
+			width: 120px;
+			min-width: 120px;
+			height: 80px;
+			background: var(--placeholder-bg);
+			border-radius: 4px;
+			overflow: hidden;
+			flex-shrink: 0;
+		}
+
+		.story-thumbnail img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+		}
+
+		.story-info {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.story-title {
+			font-size: 1.2rem;
+			font-weight: 400;
+			letter-spacing: -0.3px;
+			margin-bottom: 0.25rem;
+		}
+
+		.story-meta {
+			color: var(--text-secondary);
+			font-size: 0.9rem;
+			margin-bottom: 0.25rem;
+		}
+
+		.story-description {
+			font-size: 0.9rem;
+			color: var(--text-secondary);
+			line-height: 1.5;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+
+		.story-external-icon {
+			flex-shrink: 0;
+			color: var(--text-secondary);
+		}
+
+		.empty-state {
+			padding: 4rem 0;
+			text-align: center;
+			color: var(--text-secondary);
+			font-size: 1.1rem;
+		}
+
+		@media (max-width: 768px) {
+			.page-header h1 {
+				font-size: 2.2rem;
+			}
+
+			.story-thumbnail {
+				width: 80px;
+				min-width: 80px;
+				height: 56px;
+			}
+
+			.story-description {
+				display: none;
+			}
+
+			.story-row {
+				gap: 1rem;
+			}
+		}
+	</style>
+
+	<div class="container">
+		<header class="page-header">
+			<h1>Online</h1>
+			<p>Contos e textos publicados em revistas e plataformas online.</p>
+		</header>
+
+		{stories.length > 0 ? (
+			<section class="stories-list">
+				{stories.map((story) => (
+					<a href={story.data.externalUrl} target="_blank" rel="noopener noreferrer" class="story-row">
+						<div class="story-thumbnail">
+							{story.data.coverImage ? (
+								<img src={story.data.coverImage} alt={story.data.title} loading="lazy" />
+							) : (
+								<div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+							)}
+						</div>
+						<div class="story-info">
+							<h2 class="story-title">{story.data.title}</h2>
+							<p class="story-meta">
+								{story.data.pubDate.toLocaleDateString('pt-PT', {
+									year: 'numeric',
+									month: 'long'
+								})}
+								{story.data.publication && ` · ${story.data.publication}`}
+							</p>
+							{story.data.description && (
+								<p class="story-description">{story.data.description}</p>
+							)}
+						</div>
+						<svg class="story-external-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+					</a>
+				))}
+			</section>
+		) : (
+			<p class="empty-state">Brevemente.</p>
+		)}
+	</div>
+</BaseLayout>

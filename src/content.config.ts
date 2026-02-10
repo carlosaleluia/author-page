@@ -17,4 +17,17 @@ const livros = defineCollection({
 		}),
 });
 
-export const collections = { livros };
+const online = defineCollection({
+	loader: glob({ base: './src/content/online', pattern: '**/*.{md,mdx}' }),
+	schema: z.object({
+		title: z.string(),
+		pubDate: z.coerce.date(),
+		coverImage: z.string().optional(),
+		externalUrl: z.string().url(),
+		publication: z.string().optional(),
+		description: z.string().optional(),
+		language: z.string().optional(),
+	}),
+});
+
+export const collections = { livros, online };

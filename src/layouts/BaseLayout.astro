@@ -164,7 +164,8 @@ const books = await getSortedBooks();
 				box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 			}
 
-			.desktop-nav > li:hover .dropdown {
+			.desktop-nav > li:hover .dropdown,
+			.desktop-nav > li:focus-within .dropdown {
 				opacity: 1;
 				visibility: visible;
 				transform: translateY(0);
@@ -332,6 +333,24 @@ const books = await getSortedBooks();
 				font-size: 0.9rem;
 			}
 
+			/* Skip-to-content link */
+			.skip-link {
+				position: absolute;
+				left: -9999px;
+				top: 0;
+				z-index: 999;
+				padding: 0.75rem 1.5rem;
+				background: var(--text-primary);
+				color: #fff;
+				text-decoration: none;
+				font-size: 0.95rem;
+			}
+
+			.skip-link:focus {
+				left: 1rem;
+				top: 1rem;
+			}
+
 			/* Focus-visible indicators (WCAG 2.4.7) */
 			a:focus-visible,
 			button:focus-visible {
@@ -436,11 +455,12 @@ const books = await getSortedBooks();
 		</style>
 	</head>
 	<body>
+		<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
 		<header class="site-header">
 			<nav>
 				<div class="nav-container">
 					<div class="nav-left">
-						<button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+						<button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">
 							<span></span>
 							<span></span>
 							<span></span>
@@ -459,6 +479,7 @@ const books = await getSortedBooks();
 								))}
 							</div>
 						</li>
+						<li><a href="/online" class:list={[{ active: currentPath.startsWith('/online') }]}>Online</a></li>
 						<li><a href="/sobre" class:list={[{ active: currentPath === '/sobre' }]}>Sobre</a></li>
 						<li>
 							<a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="nav-icon">
@@ -490,6 +511,7 @@ const books = await getSortedBooks();
 							))}
 						</ul>
 					</li>
+					<li><a href="/online" class:list={[{ active: currentPath.startsWith('/online') }]}>Online</a></li>
 					<li><a href="/sobre" class:list={[{ active: currentPath === '/sobre' }]}>Sobre</a></li>
 				</ul>
 				<ul class="social-links">
@@ -509,7 +531,7 @@ const books = await getSortedBooks();
 			</nav>
 		</div>
 
-		<main>
+		<main id="main-content">
 			<slot />
 		</main>
 
@@ -540,6 +562,7 @@ const books = await getSortedBooks();
 				sideMenu?.classList.add('active');
 				menuOverlayBg?.classList.add('active');
 				hamburgerBtn?.classList.add('active');
+				hamburgerBtn?.setAttribute('aria-expanded', 'true');
 				document.body.style.overflow = 'hidden';
 			}
 
@@ -547,6 +570,7 @@ const books = await getSortedBooks();
 				sideMenu?.classList.remove('active');
 				menuOverlayBg?.classList.remove('active');
 				hamburgerBtn?.classList.remove('active');
+				hamburgerBtn?.setAttribute('aria-expanded', 'false');
 				document.body.style.overflow = '';
 				hamburgerBtn?.focus();
 			}
