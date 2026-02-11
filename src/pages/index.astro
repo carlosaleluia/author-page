@@ -260,9 +260,7 @@ const books = await getSortedBooks();
 				<h1>Carlos Aleluia</h1>
 				<div class="bio">
 					<p>
-						Carlos Aleluia é autor de [número] romances que exploram 
-						as fronteiras do possível. Os seus livros têm sido publicados 
-						em Portugal e traduzidos para [línguas]. Vive em [cidade].
+						Carlos Aleluia nasceu em Lisboa e, desde cedo, decidiu que imaginar mundos era bem mais divertido do que somente habitá-los. Atualmente, quando não tem a mente a fervilhar de novas histórias, é engenheiro de software. Talvez por isso ainda tenha um fraquinho especial por ficção científica, género que explorou na sua estreia como autor com o conto «Ágape», vencedor do prémio Ataegina 2021. Conta ainda com contos publicados na Fábrica do Terror e na Revista Palavrar, além de integrar as antologias Treze, Memórias e Almanaque Steampunk, da Editorial Divergência, e as antologias Des/pudor e Desas/sossego, da Edições Trebaruna.
 					</p>
 				</div>
 			</div>
@@ -274,9 +272,9 @@ const books = await getSortedBooks();
 
 	<div class="container">
 		<section class="books-section">
-			<h2 class="section-title">Livros Recentes</h2>
+			<h2 class="section-title">Livros</h2>
 			<div class="books-grid">
-				{books.slice(0, 3).map((book) => (
+				{books.map((book) => (
 					<article class="book-card">
 						<a href={`/livros/${book.id}/`} class="book-cover">
 							{book.data.coverImage ? (
@@ -295,7 +293,6 @@ const books = await getSortedBooks();
 					</article>
 				))}
 			</div>
-			<a href="/livros" class="view-all">Ver Todos os Livros</a>
 		</section>
 	</div>
 </BaseLayout>

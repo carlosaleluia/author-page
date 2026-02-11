@@ -10,6 +10,7 @@ const livros = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			coverImage: z.string().optional(),
+			goodreadsUrl: z.string().url().optional(),
 			buyLinks: z.array(z.object({
 				label: z.string(),
 				url: z.string(),
