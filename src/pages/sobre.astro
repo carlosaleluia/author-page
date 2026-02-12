@@ -1,20 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSortedAwards } from '../lib/premios';
+
+const awards = await getSortedAwards();
 ---
 
 <BaseLayout title="Sobre - Carlos Aleluia">
 	<style>
-		.page-header {
-			padding: 5rem 0 4rem;
-			border-bottom: 1px solid var(--border-color);
-		}
-
-		.page-header h1 {
-			font-size: 3rem;
-			font-weight: 300;
-			letter-spacing: -1px;
-		}
-
 		.bio-intro {
 			display: flex;
 			gap: 3rem;
@@ -65,40 +57,96 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 			text-underline-offset: 3px;
 		}
 
-		.awards-list {
-			list-style: none;
+		.bio-content a.story-row {
+			text-decoration: none;
+		}
+
+		.stories-list {
+			padding: 2rem 0;
+		}
+
+		.story-row {
 			display: flex;
-			flex-direction: column;
-			gap: 2rem;
-		}
-
-		.award-item {
-			padding-bottom: 2rem;
+			align-items: center;
+			gap: 1.5rem;
+			padding: 1.5rem 0;
 			border-bottom: 1px solid var(--border-color);
+			text-decoration: none;
+			color: inherit;
+			transition: background 0.2s;
+			margin: 0 -1rem;
+			padding-left: 1rem;
+			padding-right: 1rem;
+			border-radius: 4px;
 		}
 
-		.award-item:last-child {
-			border-bottom: none;
-			padding-bottom: 0;
+		.story-row:hover {
+			background: var(--bg-hover);
 		}
 
-		.award-description {
-			font-size: 1.1rem;
+		.story-row-static {
+			cursor: default;
+		}
+
+		.story-row-static:hover {
+			background: none;
+		}
+
+		.story-thumbnail {
+			width: 120px;
+			min-width: 120px;
+			height: 80px;
+			background: var(--placeholder-bg);
+			border-radius: 4px;
+			overflow: hidden;
+			flex-shrink: 0;
+		}
+
+		.story-thumbnail img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+		}
+
+		.story-info {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.story-title {
+			font-size: 1.2rem;
 			font-weight: 400;
-			margin-bottom: 0.4rem;
+			letter-spacing: -0.3px;
+			margin-bottom: 0.25rem;
 		}
 
-		.award-meta {
+		.story-meta {
+			color: var(--text-secondary);
 			font-size: 0.9rem;
+			margin-bottom: 0.25rem;
+		}
+
+		.story-description {
+			font-size: 0.9rem;
+			color: var(--text-secondary);
+			line-height: 1.5;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+
+		.story-external-icon {
+			flex-shrink: 0;
 			color: var(--text-secondary);
 		}
 
-		.award-meta span {
-			display: inline;
-		}
-
-		.award-meta .separator {
-			margin: 0 0.4rem;
+		.empty-state {
+			padding: 4rem 0;
+			text-align: center;
+			color: var(--text-secondary);
+			font-size: 1.1rem;
 		}
 
 		.contact-list {
@@ -116,10 +164,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		}
 
 		@media (max-width: 768px) {
-			.page-header h1 {
-				font-size: 2.2rem;
-			}
-
 			.bio-intro {
 				flex-direction: column;
 				align-items: center;
@@ -128,6 +172,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 			.bio-photo {
 				flex: none;
 				width: 200px;
+			}
+
+			.story-thumbnail {
+				width: 80px;
+				min-width: 80px;
+				height: 56px;
+			}
+
+			.story-description {
+				display: none;
+			}
+
+			.story-row {
+				gap: 1rem;
 			}
 		}
 	</style>
@@ -150,24 +208,48 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 		<section class="bio-content">
 			<h2>Prémios</h2>
-			<ul class="awards-list">
-				<li class="award-item">
-					<p class="award-description">[Descrição do prémio]</p>
-					<p class="award-meta">
-						<span>[Organização]</span>
-						<span class="separator">·</span>
-						<span>[Ano]</span>
-					</p>
-				</li>
-				<li class="award-item">
-					<p class="award-description">[Descrição do prémio]</p>
-					<p class="award-meta">
-						<span>[Organização]</span>
-						<span class="separator">·</span>
-						<span>[Ano]</span>
-					</p>
-				</li>
-			</ul>
+			{awards.length > 0 ? (
+				<div class="stories-list">
+					{awards.map((award) => {
+						const inner = (
+							<>
+								<div class="story-thumbnail">
+									{award.data.coverImage ? (
+										<img src={award.data.coverImage} alt={award.data.title} loading="lazy" />
+									) : (
+										<div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+									)}
+								</div>
+								<div class="story-info">
+									<h3 class="story-title">{award.data.title}</h3>
+									<p class="story-meta">
+										{award.data.placement && `${award.data.placement} · `}
+										{award.data.organization}
+										{` · ${award.data.pubDate.getFullYear()}`}
+									</p>
+									{award.data.description && (
+										<p class="story-description">{award.data.description}</p>
+									)}
+								</div>
+								{award.data.externalUrl && (
+									<svg class="story-external-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+								)}
+							</>
+						);
+						return award.data.externalUrl ? (
+							<a href={award.data.externalUrl} target="_blank" rel="noopener noreferrer" class="story-row">
+								{inner}
+							</a>
+						) : (
+							<div class="story-row story-row-static">
+								{inner}
+							</div>
+						);
+					})}
+				</div>
+			) : (
+				<p class="empty-state">Brevemente.</p>
+			)}
 
 			<h2>Contacto</h2>
 			<ul class="contact-list">

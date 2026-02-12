@@ -1,6 +1,6 @@
 ---
 title: 'Memórias'
-description: 'Uma história sobre o início de tudo'
+description: 'Memórias que se guardam, memórias que se esbatem, as que rasgam o sossego da mente, as que aprisionam. Memórias que permitem sorrisos, memórias que perseguem e perturbam. Memórias que não somos capazes de afastar.'
 pubDate: 'Dec 1 2025'
 coverImage: '/capas/memorias.jpg'
 goodreadsUrl: 'https://www.goodreads.com/book/show/244110905-mem-rias'

@@ -31,4 +31,30 @@ const online = defineCollection({
 	}),
 });
 
-export const collections = { livros, online };
+const mentions = defineCollection({
+	loader: glob({ base: './src/content/mentions', pattern: '**/*.{md,mdx}' }),
+	schema: z.object({
+		title: z.string(),
+		pubDate: z.coerce.date(),
+		coverImage: z.string().optional(),
+		externalUrl: z.string().url(),
+		source: z.string().optional(),
+		description: z.string().optional(),
+		language: z.string().optional(),
+	}),
+});
+
+const premios = defineCollection({
+	loader: glob({ base: './src/content/premios', pattern: '**/*.{md,mdx}' }),
+	schema: z.object({
+		title: z.string(),
+		pubDate: z.coerce.date(),
+		coverImage: z.string().optional(),
+		externalUrl: z.string().url().optional(),
+		organization: z.string(),
+		placement: z.string().optional(),
+		description: z.string().optional(),
+	}),
+});
+
+export const collections = { livros, online, mentions, premios };

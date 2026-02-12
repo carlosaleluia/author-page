@@ -1,6 +1,6 @@
 ---
 title: 'Treze'
-description: 'Uma viagem épica através do cosmos onde a humanidade descobre que não está sozinha no universo.'
+description: 'Há quem tenha medo do número 13. Associam-no ao azar, a dias escuros e a prenúncios tenebrosos. Para nós, na Divergência, é motivo de celebração, neste nosso décimo terceiro aniversário.'
 pubDate: 'Feb 1 2026'
 coverImage: '/capas/treze.jpg'
 buyLinks:

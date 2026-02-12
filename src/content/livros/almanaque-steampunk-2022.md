@@ -1,6 +1,6 @@
 ---
 title: 'Almanaque Steampunk'
-description: 'Uma história sobre o início de tudo'
+description: 'O Almanaque Steampunk 2022 marca o tão esperado regresso do Festival Vapor. Os tempos atuais obrigam-nos a olhar o mundo entre o real e o imaginário, com um conjunto de ameaças, mas também com muitas dádivas. Entre a realidade e o mundo idealizado, voltamos ao Museu Nacional Ferroviário, ao Festival Vapor e a este Almanaque Steampunk.'
 pubDate: 'Sep 1 2022'
 coverImage: '/capas/almanaque-steampunk-2022.png'
 goodreadsUrl: 'https://www.goodreads.com/book/show/62444918-almanaque-steampunk-2022'

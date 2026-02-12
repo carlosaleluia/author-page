@@ -1,6 +1,6 @@
 ---
 title: 'Des/Pudor'
-description: 'Uma viagem épica através do cosmos onde a humanidade descobre que não está sozinha no universo.'
+description: 'Os humanos oscilam entre o pudor e o despudor. A vergonha e o descaramento. A pureza e a indecência. A luxúria, a libertinagem. A liberdade e o constrangimento. Ser ou não ser.'
 pubDate: 'Jun 1 2023'
 coverImage: '/capas/despudor.png'
 goodreadsUrl: 'https://www.goodreads.com/book/show/175963023-des-pudor'

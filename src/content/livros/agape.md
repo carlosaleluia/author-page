@@ -1,6 +1,6 @@
 ---
 title: 'Ágape'
-description: 'Uma viagem épica através do cosmos onde a humanidade descobre que não está sozinha no universo.'
+description: 'Um conto de ficção científica onde dois robôs acedem às suas bases de dados para tentar definir o que é o amor. Conto vencedor do Prémio Ataegina 2021.'
 pubDate: 'Dec 1 2021'
 coverImage: '/capas/agape.png'
 goodreadsUrl: 'https://www.goodreads.com/book/show/59662511-gape'

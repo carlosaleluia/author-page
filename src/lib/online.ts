@@ -5,3 +5,9 @@ export async function getSortedOnlineStories() {
 		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 	);
 }
+
+export async function getSortedMentions() {
+	return (await getCollection('mentions')).sort(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+	);
+}

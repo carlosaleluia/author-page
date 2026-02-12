@@ -1,16 +1,12 @@
 ---
 title: 'Desas/sossego'
-description: 'Uma viagem épica através do cosmos onde a humanidade descobre que não está sozinha no universo.'
+description: 'Desas/sossego é um conjunto de narrativas que desconstroem a realidade da inquietação da mente, os estados que se experimentam entre uma calma, tantas vezes simulada, e um alvoroço interior, inadvertidamente extravasado para fora dos limites do corpo físico.'
 pubDate: 'Jun 1 2025'
 coverImage: '/capas/desassossego.jpg'
 goodreadsUrl: 'https://www.goodreads.com/book/show/237016284-desas-sossego'
 buyLinks:
   - label: 'Editorial Divergência'
     url: 'https://divergencia.pt/loja/desas-sossego/'
-  - label: 'Bertrand'
-    url: 'https://www.bertrand.pt/livro/des-pudor/28609469?srsltid=AfmBOorbRvxkyxXypZxEmXLF0p3fbNJs_72nSD6dCH3l9NH_1Z9oDM8T'
-  - label: 'Wook'
-    url: 'https://www.wook.pt/livro/des-pudor/28609469?srsltid=AfmBOoqeROH8MqDOTEUSMw_BTIrc2nhe1kS1J-O6eiOv7BBnzoCyjrAm#details'
 ---
 
 Conto *"Quando nos desligarmos"*
